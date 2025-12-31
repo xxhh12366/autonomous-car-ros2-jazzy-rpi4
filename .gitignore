@@ -1,0 +1,19 @@
+# ROS 2 编译产物
+build/
+install/
+log/
+# 虚拟环境
+.venv_car/
+# 日志/临时文件
+*.log
+*.swp
+.DS_Store
+# 串口/硬件配置
+/dev/
+# IDE 配置
+.vscode/
+.idea/
+# 系统缓存
+__pycache__/
+*.pyc
+
