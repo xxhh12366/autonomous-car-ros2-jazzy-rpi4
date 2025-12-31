@@ -3,7 +3,7 @@ import pyvesc
 from pyvesc.VESC.messages import GetValues, SetDutyCycle, SetRPM
 import serial
 
-serialport = '/dev/ttyS0'
+serialport = '/dev/ttyUSB2'     #电机-电调串口号
 
 def get_values_example(SetMode):
     with serial.Serial(serialport, baudrate=115200, timeout=0.01) as ser:
@@ -19,7 +19,7 @@ def get_values_example(SetMode):
 
                     
 if __name__ == "__main__":
-    #SetRPM_Values = 2000   
+    SetRPM_Values = 2000   
     SetDutyCycle_Values = 0.1
     SetMode = SetDutyCycle(SetDutyCycle_Values)
     #SetMode = SetRPM(SetRPM_Values)
