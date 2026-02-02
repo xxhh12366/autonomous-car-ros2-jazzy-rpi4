@@ -1,0 +1,58 @@
+import Python_Nano_Motor_202302V2 as Motor
+import Python_Nano_MMWR_202302V3 as MMW
+from pyvesc.VESC.messages import GetValues, SetDutyCycle, SetRPM
+
+MMW_PORT = "/dev/ttyTHS1"
+MMW_BAUD_RATE = 115200
+TRANS_RATIO = 6.287  # 传动比为6.287
+WHEEL_RADIUS = 0.032  # 半径为0.032米
+STOP_DISTANCE = 35  # 停止距离
+SLOW_DOWN_DISTANCE = 60  # 减速距离
+SPEED_UP_DISTANCE = 80  # 加速距离
+TO_FOLLOW_TIME = 8  # 变化至跟随模式的时间
+
+DEFAULT_DUTY = 0.08  # 默认占空比
+MAX_DUTY = 0.1  # 最大占空比
+
+duty = DEFAULT_DUTY
+
+
+def speed2rpm(speed): return int(speed * 0.01 * TRANS_RATIO * 60 / (2 * 3.14 * WHEEL_RADIUS))
+
+
+def rpm2duty(rpm): return (abs(rpm) - 100) * 0.11 / 1200 + 0.01 if rpm > 0 else -((abs(rpm) - 100) * 0.11 / 1200 + 0.01)
+
+
+def ACCMain():
+    global duty
+    port = MMW.openMMWPort(MMW_PORT, MMW_BAUD_RATE)  # 打开串口
+
+    while True:
+        distance, _ = MMW.MMWDetection(port)
+
+        if 0 < distance < 200:
+            if distance < STOP_DISTANCE:  # 停止
+                duty = 0
+
+            elif distance < SLOW_DOWN_DISTANCE:  # 减速
+                correctionSpeed = (distance - SLOW_DOWN_DISTANCE) / TO_FOLLOW_TIME
+                duty = duty + rpm2duty(speed2rpm(correctionSpeed))
+
+            elif distance > SPEED_UP_DISTANCE:  # 加速
+                correctionSpeed = (distance - SPEED_UP_DISTANCE) / TO_FOLLOW_TIME
+                duty = duty + rpm2duty(speed2rpm(correctionSpeed))
+
+            else:  # 跟随
+                duty = DEFAULT_DUTY
+
+        else:
+            duty = DEFAULT_DUTY
+
+        duty = 0 if duty < 0 else duty
+        duty = MAX_DUTY if duty > MAX_DUTY else duty
+        Motor.get_values_example(SetDutyCycle(duty))
+        print("distance: ", distance, "\tduty = %f" % duty, "\t")
+
+
+if __name__ == "__main__":
+    ACCMain()
