@@ -59,7 +59,7 @@ if scs_comm_result != COMM_SUCCESS:
 elif scs_error != 0:
     print("%s" % packetHandler.getRxPacketError(scs_error))
 
-# 比起旧版本多加了上下界的判断
+# 比起旧版本多加了上下界的判断（保护舵机）
 def servo_angle_write(target_position):
     target_position = SCS_MAXIMUM_POSITION_VALUE if target_position > SCS_MAXIMUM_POSITION_VALUE else target_position
     target_position = SCS_MINIMUM_POSITION_VALUE if target_position < SCS_MINIMUM_POSITION_VALUE else target_position
@@ -79,7 +79,7 @@ def servo_angle_read():
         print(packetHandler.getTxRxResult(scs_comm_result))
     elif scs_error != 0:
         print(packetHandler.getRxPacketError(scs_error))
-
+    # 分离位置和速度
     scs_present_position = SCS_LOWORD(scs_present_position_speed)
     scs_present_speed = SCS_HIWORD(scs_present_position_speed)
     # print("[ID:%03d] GoalPos:%03d PresPos:%03d PresSpd:%03d"
