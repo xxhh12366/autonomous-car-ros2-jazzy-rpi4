@@ -11,10 +11,11 @@
 # --------------------------------
 import serial
 
+#声明端口号与比特率
 MMWR_PORT = "/dev/ttyTHS1"
 MMWR_BAUD_RATE = 115200
 
-
+#-> serial.Serial：这是类型提示，表明这个函数执行成功后，返回值的类型是 serial.Serial（即一个串口对象）
 def openMMWPort(port=MMWR_PORT, baudRate=MMWR_BAUD_RATE) -> serial.Serial:
     """
     打开串口
@@ -32,7 +33,7 @@ def openMMWPort(port=MMWR_PORT, baudRate=MMWR_BAUD_RATE) -> serial.Serial:
 
 def checkData(bytesData: bytes) -> bool:
     """
-    不进位累加校验和验证数据
+    使用不进位累加校验和来验证数据
 
     :return result: bool, true -> 检验成功, False -> 校验失败
     """
@@ -41,6 +42,7 @@ def checkData(bytesData: bytes) -> bool:
     for bit in bytesData:
         checkSum = checkSum + bit
 
+    #在这里校验
     if bytesData[-1] == (checkSum - bytesData[-1]):
         result = True
 
@@ -49,7 +51,7 @@ def checkData(bytesData: bytes) -> bool:
 
 def analyseData(bytesData: bytes):
     """
-    解析数据
+    解析毫米波雷达或其他传感器数据的函数，从原始字节数据中提取距离和速度信息
 
     :param bytesData: bytes, 串口读取的字节数据
     :return distance: int, 距离
@@ -81,6 +83,8 @@ def printData(distance: int, speed: int):
 
 def MMWDetection(uart: serial.Serial):
     """
+    # 1. 创建Serial对象
+    uart = serial.Serial('COM3', 115200, timeout=5)
     毫米波检测函数，需放置在循环中执行
 
     :param uart: serial.Serial, 串口对象

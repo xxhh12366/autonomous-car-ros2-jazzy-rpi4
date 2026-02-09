@@ -2,6 +2,7 @@ import pyvesc
 from pyvesc.VESC.messages import GetValues, SetDutyCycle, SetRPM
 import serial
 
+#这里改port
 serialport = '/dev/motor'
 Trans_Ratio = 6.287  # 传动比为6.1
 Wheel_Radius = 0.032  # 半径为0.032米
@@ -19,9 +20,10 @@ def printSpeed(rpm):
     print("小车的速度为%.6fcm/s" % velocity)
     return velocity
 
-
+#从VESC读取电机转速（RPM），然后计算车轮的线速度（单位：厘米/秒）。
 def get_values_example(SetMode):
     with serial.Serial(serialport, baudrate=115200, timeout=0.01) as ser:
+        #将 SetMode消息编码后发送给VESC，然后请求VESC返回当前的电机状态（包括转速）。如果成功接收到数据，就计算并返回车轮的线速度；否则返回错误信息。
         ser.write(pyvesc.encode(SetMode))
         ser.write(pyvesc.encode_request(GetValues))
         (response, consumed) = pyvesc.decode(ser.read(78))

@@ -1,0 +1,11 @@
+# dataset path
+train: dataset/images/train2017
+val: dataset/images/val
+test: E:\ultralytics-main/dataset/images/test
+
+# number of classes
+nc: 1
+
+# class names
+names:
+    0: left

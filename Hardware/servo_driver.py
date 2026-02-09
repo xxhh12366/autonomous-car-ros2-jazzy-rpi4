@@ -28,6 +28,7 @@ portHandler = PortHandler(DEVICENAME)
 packetHandler = PacketHandler(protocol_end)
 portHandler.openPort()
 portHandler.setBaudRate(BAUDRATE)
+
 # Write SCServo acc
 scs_comm_result, scs_error = packetHandler.write1ByteTxRx(portHandler, SCS_ID, ADDR_SCS_GOAL_ACC, SCS_MOVING_ACC)
 if scs_comm_result != COMM_SUCCESS:

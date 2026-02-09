@@ -44,6 +44,7 @@ portHandler.setBaudRate(BAUDRATE)
 # portHandler = serial.Serial(DEVICENAME, BAUDRATE)
 # print(portHandler.is_open)
 packetHandler = PacketHandler(protocol_end)
+
 # Write SCServo acc
 scs_comm_result, scs_error = packetHandler.write1ByteTxRx(portHandler, SCS_ID, ADDR_SCS_GOAL_ACC, SCS_MOVING_ACC)
 if scs_comm_result != COMM_SUCCESS:
@@ -58,7 +59,7 @@ if scs_comm_result != COMM_SUCCESS:
 elif scs_error != 0:
     print("%s" % packetHandler.getRxPacketError(scs_error))
 
-
+# 比起旧版本多加了上下界的判断
 def servo_angle_write(target_position):
     target_position = SCS_MAXIMUM_POSITION_VALUE if target_position > SCS_MAXIMUM_POSITION_VALUE else target_position
     target_position = SCS_MINIMUM_POSITION_VALUE if target_position < SCS_MINIMUM_POSITION_VALUE else target_position

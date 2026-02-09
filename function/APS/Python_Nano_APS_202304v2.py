@@ -34,8 +34,8 @@ import Python_Nano_Motor_202302V2 as Motor
 import Python_Nano_Servo_202302V2 as Servo
 import Python_Nano_Ultrasonic_202305v2 as Ultra
 import time
-import socket
-import struct
+import socket #网络通信
+import struct #二进制数据打包/解包
 import math
 
 
@@ -50,6 +50,13 @@ PARKING_LENGTH_THRESHOLD = 55 # cm
 Step = 1
 LastData = 0
 
+"""
+类功能概述：
+UltraMF是 Ultra.UltraObj的子类，增加了中值滤波功能：
+原始功能：超声波测距
+新增功能：对多次测量结果进行排序，取中位数，消除异常值
+
+"""
 
 class UltraMF(Ultra.UltraObj):
     def __init__(self, filterLength: int, trigPin, echoPin):
