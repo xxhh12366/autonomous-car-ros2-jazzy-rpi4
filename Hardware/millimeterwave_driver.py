@@ -1,66 +1,130 @@
-#                                                                  #Python_Nano_MMWR_202211v1.py
-# # -*- coding: utf-8 -*
-# import serial
-# import time
-# import re
-# ser = serial.Serial('/dev/ttyUSB3', 115200)
-# if ser.isOpen == False:
-#     ser.open()                # 打开串口
-# ser.write(b"Raspberry pi is ready")
-# try:
-#     while True:
-        
-#             response = ser.read(28)        # 读取内容并显示
-#             print(response)
-#             response=response.decode('utf-8')
-#             a=re.findall(r'\d+',response)
-        
-           
-            
-#             dis=int(a[0],base=10)
-#             print("距离",dis)
-#             ser.flushInput()                 # 清空接收缓存区
-#             time.sleep(0.1)                  # 软件延时
-                       
-# except KeyboardInterrupt:
-#     ser.close()                                    
-
-# -*- coding: utf-8 -*
+# #!/usr/bin/env python3
+# coding=UTF-8
+# ------------------------------------------------------------------ #
+# @file    : millimeterwave_driver.py
+# @platform: Python
+# @board   : Jetson Nano
+# @brief   : 毫米波雷达（HLR12）驱动程序 - Consolidated MMWR driver
+# 
+# Jetson Nano 8号引脚是UART_TX，10号引脚是UART_RX
+# 毫米波HLR12通讯协议
+# 读数据
+# 地址码（2字节）数据长度（1字节）指令码（1字节）检测距离（2字节）速度数据（2字节）信号强度（2字节）手势识别（1字节）雷达关闭提示（1字节）和校验（1字节）
+# 地址码：0x55 0xA5
+# 数据长度：0x0A，从数据长度到雷达关闭提示的总字节数
+# 指令码：0xD1 - 开关雷达指令，0xD2 - 设置波特率，0xD3 - 查询微波检测信息
+# 距离、速度：两个字节为高八位、低八位，默认先发送高八位，速度有正负，正数表示远离，负数表示接近
+# 手势识别：1表识别到手势（摆手），0表未识别到手势
+# 
+# @author  : WeiJiaHao
+# @date    : 2023/2
+# @web     : http://www.relaxingtechnology.com/
+# @e-mail  : relaxingtech@qq.com
+# Copyright (C) 2023 Relaxing Technology Chongqing Co.,Ltd. All rights reserved.
+# ------------------------------------------------------------------ #
 import serial
-import time
 
-# 注意检查串口号，建议使用前面提到的 /dev/serial/by-id/ 里的名称更稳定
-ser = serial.Serial('/dev/ttyUSB3', 115200, timeout=1)
+# 声明端口号与比特率
+MMWR_PORT = "/dev/ttyTHS1"
+MMWR_BAUD_RATE = 115200
 
-if not ser.isOpen():
-    ser.open()
 
-print("毫米波雷达解析程序启动...")
+def openMMWPort(port=MMWR_PORT, baudRate=MMWR_BAUD_RATE) -> serial.Serial:
+    """
+    打开串口
+    
+    :param port: 串口设备路径
+    :param baudRate: 波特率
+    :return uart: serial.Serial, 串口类
+    """
+    try:
+        uart = serial.Serial(port, baudRate, timeout=5)
+    except Exception as error:
+        print("Failed to open serial port\n", error)
+        exit(0)
+    else:
+        return uart
 
-try:
-    while True:
-        # 1. 寻找帧头 (假设帧头是 0x55 0xA5)
-        head = ser.read(1)
-        if head == b'\x55':
-            next_byte = ser.read(1)
-            if next_byte == b'\xa5':
-                # 2. 读取剩余的数据包内容 (假设总包长 13，已经读了 2 字节，还剩 11)
-                data = ser.read(11) 
-                
-                # 3. 解析距离 (通常距离在特定的字节位，这里示例取 data 的前两个字节)
-                # 假设：距离(mm) = 高字节 * 256 + 低字节
-                # 请根据说明书修改索引，比如 data[1] 和 data[2]
-                try:
-                    distance_mm = data[2] * 256 + data[3] 
-                    print(f"实时距离: {distance_mm} mm")
-                except IndexError:
-                    pass
-                
-                # 4. 清除多余缓存，防止数据堆积导致的延迟
-                ser.reset_input_buffer() 
-        
-        time.sleep(0.05)
-                           
-except KeyboardInterrupt:
-    ser.close()
-    print("串口已关闭")
+
+def checkData(bytesData: bytes) -> bool:
+    """
+    使用不进位累加校验和来验证数据
+
+    :param bytesData: 要校验的字节数据
+    :return result: bool, True -> 校验成功, False -> 校验失败
+    """
+    checkSum = 0
+    for bit in bytesData:
+        checkSum = checkSum + bit
+
+    # 在这里校验
+    return bytesData[-1] == (checkSum - bytesData[-1])
+
+
+def analyseData(bytesData: bytes):
+    """
+    解析毫米波雷达数据的函数，从原始字节数据中提取距离和速度信息
+
+    :param bytesData: bytes, 串口读取的字节数据
+    :return distance: int, 距离 (cm)
+    :return speed: int, 相对速度 (cm/s)
+    """
+    distance = ((bytesData[4] << 8) | bytesData[5])  # 高八位，低八位组合
+    speedData_untreated = (bytesData[6] << 8) | bytesData[7]
+
+    if speedData_untreated & 0x8000 == 0x8000:  # 速度为负
+        speed = -((speedData_untreated - 1) ^ 0xFFFF)
+    else:  # 速度为正
+        speed = speedData_untreated
+
+    return distance, speed
+
+
+def printData(distance: int, speed: int):
+    """
+    打印距离和速度
+
+    :param distance: int, 距离
+    :param speed: int, 相对速度
+    """
+    print("distance = ", distance, "cm", end="\t")
+    print("relative_speed = ", speed, "cm/s")
+
+
+def MMWDetection(uart: serial.Serial):
+    """
+    毫米波检测函数，需放置在循环中执行
+
+    :param uart: serial.Serial, 串口对象
+    :return distance: int, 距离 (cm)
+    :return speed: int, 速度 (cm/s)
+    """
+    try:
+        distance = 0
+        speed = 0
+        while True:
+            if uart.is_open and uart.in_waiting:  # 未检测到数据时串口没有字节缓存
+                uartData = uart.read(uart.in_waiting)
+                if checkData(uartData):  # 校验数据
+                    distance, speed = analyseData(uartData)  # 解析数据
+                    # printData(distance, speed)  # 可选：打印数据
+                    break
+                else:
+                    print("Data validation failed")  # 数据校验失败
+        return distance, speed
+    except KeyboardInterrupt:
+        uart.close()
+        exit(0)
+
+
+if __name__ == "__main__":
+    Uart = openMMWPort(port=MMWR_PORT, baudRate=MMWR_BAUD_RATE)  # 打开串口
+    print("毫米波雷达驱动程序启动...")
+    try:
+        while True:
+            distance, speed = MMWDetection(Uart)
+            if distance > 0:
+                printData(distance, speed)
+    except KeyboardInterrupt:
+        Uart.close()
+        print("\n串口已关闭")
