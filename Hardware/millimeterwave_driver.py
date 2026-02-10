@@ -1,4 +1,4 @@
-# #!/usr/bin/env python3
+#!/usr/bin/env python3
 # coding=UTF-8
 # ------------------------------------------------------------------ #
 # @file    : millimeterwave_driver.py
@@ -105,12 +105,13 @@ def MMWDetection(uart: serial.Serial):
         while True:
             if uart.is_open and uart.in_waiting:  # 未检测到数据时串口没有字节缓存
                 uartData = uart.read(uart.in_waiting)
-                if checkData(uartData):  # 校验数据
+                if not checkData(uartData):  # 校验数据失败
+                    print("Data validation failed")  # 数据校验失败
+                    continue
+                else:
                     distance, speed = analyseData(uartData)  # 解析数据
                     # printData(distance, speed)  # 可选：打印数据
                     break
-                else:
-                    print("Data validation failed")  # 数据校验失败
         return distance, speed
     except KeyboardInterrupt:
         uart.close()
