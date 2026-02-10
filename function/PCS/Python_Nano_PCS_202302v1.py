@@ -1,7 +1,12 @@
-import Python_Nano_Servo_202302V2 as Servo
-import Python_Nano_Motor_202302V2 as Motor
+import sys
+import os
+# Add Hardware directory to path
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
+
+from Hardware import servo_driver as Servo
+from Hardware import motor_driver as Motor
+from Hardware.millimeterwave_driver import openMMWPort, MMWDetection
 from pyvesc.VESC.messages import SetDutyCycle
-from Python_Nano_MMWR_202302V2 import openMMWPort, MMWDetection
 from Python_Nano_Ultrasonic_202302V1 import ultrasonicDetection
 import socket
 import struct

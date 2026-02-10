@@ -12,13 +12,18 @@
 # @e-mail  : relaxingtech@qq.com
 # Copyright (C) 2023 Relaxing Technology Chongqing Co.,Ltd. All rights reserved.
 # ------------------------------------------------------------------ #
+import sys
+import os
+# Add Hardware directory to path
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
+
 import cv2
 import hyperlpr
 import numpy as np
 import time
 from PIL import ImageFont, ImageDraw, Image
 from pyvesc.VESC.messages import GetValues, SetDutyCycle, SetRPM
-import Python_Nano_Motor_202302V2 as Motor
+from Hardware import motor_driver as Motor
 
 plate_length_threshold=80    # 车牌长度阈值
 MOTOR_DUTY_CYCLE = 0.06     # 电机占空比

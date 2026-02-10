@@ -1,6 +1,11 @@
+import sys
+import os
+# Add Hardware directory to path
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
+
 from pyvesc.VESC.messages import GetValues, SetDutyCycle, SetRPM
-import Python_Nano_Motor_202302V2 as Motor
-import Python_Nano_MMWR_202302V2 as MMWR
+from Hardware import motor_driver as Motor
+from Hardware import millimeterwave_driver as MMWR
 
 
 DISTANCE_THRESHOLD = 30     # AEB设定阈值

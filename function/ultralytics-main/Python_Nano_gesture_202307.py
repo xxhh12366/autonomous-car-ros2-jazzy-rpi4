@@ -12,10 +12,15 @@
 # @e-mail  : relaxingtech@qq.com
 # Copyright (C) 2023 Relaxing Technology Chongqing Co.,Ltd. All rights reserved.
 # ------------------------------------------------------------------ #
+import sys
+import os
+# Add Hardware directory to path
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
+
 from ultralytics import YOLO
 import cv2
-import Python_Nano_Servo_202302V2 as Servo
-import Python_Nano_Motor_202302V2 as Motor
+from Hardware import servo_driver as Servo
+from Hardware import motor_driver as Motor
 from pyvesc.VESC.messages import GetValues, SetDutyCycle, SetRPM
 
 model = YOLO("best.pt")

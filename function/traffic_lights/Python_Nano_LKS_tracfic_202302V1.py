@@ -1,7 +1,12 @@
+import sys
+import os
+# Add Hardware directory to path
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
+
 import numpy as np
 import cv2 as cv
 import time
-import Python_Nano_Servo_202302V2 as Servo
+from Hardware import servo_driver as Servo
 
 
 # -------------------------------------------------------------------------------#

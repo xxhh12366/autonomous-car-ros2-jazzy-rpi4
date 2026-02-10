@@ -1,9 +1,14 @@
+import sys
+import os
+# Add Hardware directory to path
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
+
 import time
 import cv2
 import numpy as np
 from pyvesc.VESC.messages import GetValues, SetDutyCycle, SetRPM
-import Python_Nano_Motor_202302V2 as Motor
-import Python_Nano_Servo_202302V2 as Servo
+from Hardware import motor_driver as Motor
+from Hardware import servo_driver as Servo
 import Python_Nano_LKS4ZebraBrake_202302V1 as LKS
 
 

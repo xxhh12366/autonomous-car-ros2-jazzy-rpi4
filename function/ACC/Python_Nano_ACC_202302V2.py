@@ -1,3 +1,8 @@
+import sys
+import os
+# Add Hardware directory to path
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
+
 #要执行ACC功能的话，这个是main文件
 """
 这是一个距离-速度闭环控制系统：
@@ -6,9 +11,8 @@
 控制：将速度指令转换为电机占空比，发送给VESC电机控制器
 """
 
-
-import Python_Nano_Motor_202302V2 as Motor
-import Python_Nano_MMWR_202302V3 as MMW
+from Hardware import motor_driver as Motor
+from Hardware import millimeterwave_driver as MMW
 from pyvesc.VESC.messages import GetValues, SetDutyCycle, SetRPM
 
 #这里改port

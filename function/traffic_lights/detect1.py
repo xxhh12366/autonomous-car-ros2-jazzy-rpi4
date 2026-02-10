@@ -31,11 +31,16 @@ from utils.general import apply_classifier, check_img_size, check_imshow, check_
 from utils.plots import Annotator, colors
 from utils.torch_utils import load_classifier, select_device, time_sync
 
+import sys
+import os
+# Add Hardware directory to path
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
+
 import pyvesc
 from pyvesc.VESC.messages import GetValues, SetDutyCycle, SetRPM
 import serial
 import Python_Nano_LKS_tracfic_202302V1 as LKS
-import Python_Nano_Servo_202302V2 as Servo
+from Hardware import servo_driver as Servo
 
 serialport = '/dev/ttyUSB0'
 def get_values_example(SetMode):
