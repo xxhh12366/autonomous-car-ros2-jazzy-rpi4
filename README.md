@@ -259,8 +259,8 @@ PARKING_LENGTH_THRESHOLD = 55       # Parking space length threshold (cm)
 # Check available ports
 ls -l /dev/tty*
 
-# Grant permissions
-sudo chmod 666 /dev/ttyUSB0
+# Grant permissions (example for motor controller on /dev/ttyUSB2)
+sudo chmod 666 /dev/ttyUSB2
 ```
 
 #### Camera Not Detected
@@ -555,8 +555,8 @@ PARKING_LENGTH_THRESHOLD = 55       # 车位长度阈值（厘米）
 # 检查可用端口
 ls -l /dev/tty*
 
-# 授予权限
-sudo chmod 666 /dev/ttyUSB0
+# 授予权限（示例：电机控制器在 /dev/ttyUSB2）
+sudo chmod 666 /dev/ttyUSB2
 ```
 
 #### 摄像头未检测到
