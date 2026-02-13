@@ -57,8 +57,8 @@ autonomous-car-ros2-jazzy-rpi4/
 │   ├── gps_driver.py          # GPS sensor driver
 │   ├── ultrasonic_driver.py   # Ultrasonic sensor array
 │   ├── millimeterwave_driver.py # MMW radar driver
-│   └── pyvesc/            # PyVESC library for motor control
-│       └── scservo_sdk/   # SCServo SDK for servo control
+│   ├── pyvesc/            # PyVESC library for motor control
+│   └── scservo_sdk/       # SCServo SDK for servo control
 ├── control/               # Control algorithms
 │   └── pid_controller.py       # PID controller implementation
 ├── function/              # ADAS feature implementations
@@ -353,8 +353,8 @@ autonomous-car-ros2-jazzy-rpi4/
 │   ├── gps_driver.py          # GPS传感器驱动
 │   ├── ultrasonic_driver.py   # 超声波传感器阵列
 │   ├── millimeterwave_driver.py # 毫米波雷达驱动
-│   └── pyvesc/            # 电机控制的PyVESC库
-│       └── scservo_sdk/   # 舵机控制的SCServo SDK
+│   ├── pyvesc/            # 电机控制的PyVESC库
+│   └── scservo_sdk/       # 舵机控制的SCServo SDK
 ├── control/               # 控制算法
 │   └── pid_controller.py       # PID控制器实现
 ├── function/              # ADAS功能实现
