@@ -213,6 +213,7 @@ Copyright (C) 2023 Relaxing Technology Chongqing Co.,Ltd. All rights reserved.
 
 ## 更新日志
 
+- 2026/02: 添加全面的中文文档和代码注释
 - 2023/05: 自动泊车系统优化
 - 2023/04: 新增APS功能
 - 2023/03: 车道保持系统实现
