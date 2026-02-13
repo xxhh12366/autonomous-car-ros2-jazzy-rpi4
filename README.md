@@ -135,7 +135,7 @@ autonomous-car-ros2-jazzy-rpi4/
 5. **Configure Serial Ports**
    ```bash
    # Grant permission to serial ports
-   sudo chmod 666 /dev/ttyUSB0  # Motor controller
+   sudo chmod 666 /dev/ttyUSB2  # Motor controller
    sudo chmod 666 /dev/ttyUSB1  # LiDAR
    sudo chmod 666 /dev/ttyTHS1  # Millimeter-wave radar
    ```
@@ -431,7 +431,7 @@ autonomous-car-ros2-jazzy-rpi4/
 5. **配置串口**
    ```bash
    # 授予串口权限
-   sudo chmod 666 /dev/ttyUSB0  # 电机控制器
+   sudo chmod 666 /dev/ttyUSB2  # 电机控制器
    sudo chmod 666 /dev/ttyUSB1  # 激光雷达
    sudo chmod 666 /dev/ttyTHS1  # 毫米波雷达
    ```
