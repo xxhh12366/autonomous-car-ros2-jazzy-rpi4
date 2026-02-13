@@ -106,7 +106,6 @@ def MMWDetection(uart: serial.Serial):
         uart.close()
         exit(0)
 
-
 if __name__ == "__main__":
     Uart = openMMWPort(port=MMWR_PORT, baudRate=MMWR_BAUD_RATE)  # 打开串口
     while True:
