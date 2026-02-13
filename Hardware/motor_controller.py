@@ -2,6 +2,7 @@
 Unified Motor Controller for VESC-based motors
 Consolidates motor control functionality previously duplicated across multiple modules
 """
+import math
 import pyvesc
 from pyvesc.VESC.messages import GetValues, SetDutyCycle, SetRPM
 import serial
@@ -81,7 +82,8 @@ class MotorController:
                 (response, consumed) = pyvesc.decode(ser.read(78))
                 if consumed == 78:
                     # Calculate velocity: rpm -> wheel speed in cm/s
-                    velocity = response.rpm / self.trans_ratio * (2 * 3.14 * self.wheel_radius) / 60 * 100
+                    # Formula: velocity = (rpm / trans_ratio) * (2 * pi * wheel_radius) / 60 * 100
+                    velocity = response.rpm / self.trans_ratio * (2 * math.pi * self.wheel_radius) / 60 * 100
                     return velocity
                 else:
                     return 'error'
@@ -99,7 +101,7 @@ class MotorController:
         Returns:
             Wheel velocity in cm/s
         """
-        velocity = rpm / self.trans_ratio * (2 * 3.14 * self.wheel_radius) / 60 * 100
+        velocity = rpm / self.trans_ratio * (2 * math.pi * self.wheel_radius) / 60 * 100
         return velocity
     
     def print_velocity(self, rpm: float) -> float:

@@ -50,6 +50,11 @@ if __name__ == "__main__":
     SetMode = SetDutyCycle(SetDutyCycle_Values)
     Duty_PID = SetDutyCycle_Values
     
+    # Conversion constants for duty cycle calculation
+    # These values are calibration constants specific to the VESC and motor setup
+    RPM_TO_DUTY_DIVISOR = 15200  # Converts RPM to duty cycle range
+    DUTY_OFFSET = 1/152          # Base duty cycle offset
+    
     try:
         while True:
             SetMode = SetDutyCycle(Duty_PID)
@@ -57,7 +62,7 @@ if __name__ == "__main__":
             if RPM_NOW != 'error':
                 RPM_ERR = RPM_NOW - Target_rpm
                 RPM_PID = pid(RPM_ERR) + RPM_NOW
-                Duty_PID = RPM_PID/15200 + 1/152
+                Duty_PID = RPM_PID/RPM_TO_DUTY_DIVISOR + DUTY_OFFSET
                 print("RPM_NOW = ", RPM_NOW, "RPM_ERR = ", RPM_ERR, "RPM_PID = ", RPM_PID)   
                 print("Duty_PID = ", Duty_PID)
             else:

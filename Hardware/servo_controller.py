@@ -54,8 +54,8 @@ class ServoController:
             baudrate: Serial communication speed
             min_position: Minimum position value
             max_position: Maximum position value
-            moving_speed: Default moving speed (0 = max speed)
-            moving_acc: Default acceleration (0 = max acceleration)
+            moving_speed: Default moving speed (0 = maximum speed, higher values = slower)
+            moving_acc: Default acceleration (0 = maximum acceleration, higher values = gentler)
             protocol_end: Protocol bit end (STS/SMS=0, SCS=1)
         """
         self.device_name = device_name

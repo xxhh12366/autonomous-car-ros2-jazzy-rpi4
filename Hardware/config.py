@@ -24,8 +24,8 @@ SERVO_CONFIG = {
     'device_name': '/dev/ttyUSB0',
     'servo_id': 1,
     'baudrate': 1000000,
-    'min_position': 500,
-    'max_position': 2500,
+    'min_position': 500,     # Full range: 500-2500 (default for SCServo)
+    'max_position': 2500,    # Adjust based on your servo's safe range
     'moving_speed': 0,  # 0 = max speed
     'moving_acc': 0,    # 0 = max acceleration
     'protocol_end': 0,  # STS/SMS=0, SCS=1
