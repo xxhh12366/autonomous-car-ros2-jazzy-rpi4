@@ -29,14 +29,39 @@
 # @e-mail  : relaxingtech@qq.com
 # Copyright (C) 2023 Relaxing Technology Chongqing Co.,Ltd. All rights reserved.
 # ------------------------------------------------------------------ #
+import sys
+import os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', 'Hardware'))
+
 from pyvesc.VESC.messages import GetValues, SetDutyCycle, SetRPM
-import Python_Nano_Motor_202302V2 as Motor
-import Python_Nano_Servo_202302V2 as Servo
+from motor_controller import MotorController
+from servo_controller import ServoController
+from config import MOTOR_CONFIG, SERVO_CONFIG
 import Python_Nano_Ultrasonic_202305v2 as Ultra
 import time
 import socket #网络通信
 import struct #二进制数据打包/解包
 import math
+
+# Initialize motor and servo controllers
+motor = MotorController(
+    serial_port=MOTOR_CONFIG['serial_port'],
+    baudrate=MOTOR_CONFIG['baudrate'],
+    trans_ratio=MOTOR_CONFIG['trans_ratio'],
+    wheel_radius=MOTOR_CONFIG['wheel_radius'],
+    timeout=MOTOR_CONFIG['timeout']
+)
+
+servo = ServoController(
+    device_name=SERVO_CONFIG['device_name'],
+    servo_id=SERVO_CONFIG['servo_id'],
+    baudrate=SERVO_CONFIG['baudrate'],
+    min_position=SERVO_CONFIG['min_position'],
+    max_position=SERVO_CONFIG['max_position'],
+    moving_speed=SERVO_CONFIG['moving_speed'],
+    moving_acc=SERVO_CONFIG['moving_acc'],
+    protocol_end=SERVO_CONFIG['protocol_end']
+)
 
 
 IP = '10.10.100.43'
@@ -104,11 +129,12 @@ def servoPositionSocket():
 # 电机、舵机控制
 def run(position=DEFAULT_POSITION, duty=DEFAULT_DUTY, stopFlag=False):
     duty = 0 if stopFlag else duty
-    Servo.servo_angle_write(int(position))
-    velocity = Motor.get_values_example(SetDutyCycle(duty))
+    servo.write_position(int(position))
+    velocity = motor.get_velocity(SetDutyCycle(duty))
     if stopFlag:
         time.sleep(1)
-    return Servo.servo_angle_read(), velocity
+    current_position, _ = servo.read_position()
+    return current_position, velocity
 
 
 # 检测停车位
@@ -226,7 +252,7 @@ if __name__ == "__main__":
     RightUltra = UltraMF(5, Ultra.RIGHT_TRIG_PIN, Ultra.RIGHT_ECHO_PIN)
     LeftUltra = UltraMF(5, Ultra.LEFT_TRIG_PIN, Ultra.LEFT_ECHO_PIN)
 
-    Servo.servo_angle_write(DEFAULT_POSITION)
+    servo.write_position(DEFAULT_POSITION)
     time.sleep(1)
 
     try:

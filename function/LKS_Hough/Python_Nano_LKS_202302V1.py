@@ -1,8 +1,25 @@
 # from ctypes.wintypes import ULARGE_INTEGER
+import sys
+import os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', 'Hardware'))
+
 import numpy as np
 import cv2 as cv
 import time
-import Python_Nano_Servo_202302V2 as Servo
+from servo_controller import ServoController
+from config import SERVO_CONFIG
+
+# Initialize servo controller
+servo = ServoController(
+    device_name=SERVO_CONFIG['device_name'],
+    servo_id=SERVO_CONFIG['servo_id'],
+    baudrate=SERVO_CONFIG['baudrate'],
+    min_position=SERVO_CONFIG['min_position'],
+    max_position=SERVO_CONFIG['max_position'],
+    moving_speed=SERVO_CONFIG['moving_speed'],
+    moving_acc=SERVO_CONFIG['moving_acc'],
+    protocol_end=SERVO_CONFIG['protocol_end']
+)
 
 
 # -------------------------------------------------------------------------------#
@@ -292,7 +309,7 @@ def main():
 
         uart = int(err_generator(-err))
         print("Servo position: ", uart)
-        Servo.servo_angle_write(uart)
+        servo.write_position(uart)
         # processed = process_image(frame)
         # cv.imshow("image", processed)
         # cv.moveWindow('image',720,300)

@@ -6,10 +6,23 @@
 控制：将速度指令转换为电机占空比，发送给VESC电机控制器
 """
 
+import sys
+import os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', 'Hardware'))
 
-import Python_Nano_Motor_202302V2 as Motor
+from motor_controller import MotorController
+from config import MOTOR_CONFIG
 import Python_Nano_MMWR_202302V3 as MMW
 from pyvesc.VESC.messages import GetValues, SetDutyCycle, SetRPM
+
+# Initialize motor controller
+motor = MotorController(
+    serial_port=MOTOR_CONFIG['serial_port'],
+    baudrate=MOTOR_CONFIG['baudrate'],
+    trans_ratio=MOTOR_CONFIG['trans_ratio'],
+    wheel_radius=MOTOR_CONFIG['wheel_radius'],
+    timeout=MOTOR_CONFIG['timeout']
+)
 
 #这里改port
 MMW_PORT = "/dev/ttyTHS1"
@@ -71,7 +84,7 @@ def ACCMain():
         # 设定好duty的上下限
         duty = 0 if duty < 0 else duty
         duty = MAX_DUTY if duty > MAX_DUTY else duty
-        Motor.get_values_example(SetDutyCycle(duty))    #目前这个的作用就只是发送控制命令给电机
+        motor.get_velocity(SetDutyCycle(duty))    #目前这个的作用就只是发送控制命令给电机
         print("distance: ", distance, "\tduty = %f" % duty, "\t")
 
 
